@@ -1,7 +1,7 @@
 #include <utility>
 
 #include "member.hpp"
-#include "logger.hpp"
+#include "utilities/logger.hpp"
 
 #define RETURN_IF_NOT_INITIALIZED if(not isInitialized()) { return *this; }
 

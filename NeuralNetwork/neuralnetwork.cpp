@@ -1,9 +1,9 @@
 #include <utility>
 #include <string>
 
-#include "generator.hpp"
 #include "neuralnetwork.hpp"
-#include "logger.hpp"
+#include "utilities/generator.hpp"
+#include "utilities/logger.hpp"
 
 namespace detail
 {

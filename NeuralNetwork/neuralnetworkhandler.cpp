@@ -1,8 +1,8 @@
 #include <iostream>
 
-#include "generator.hpp"
 #include "neuralnetworkhandler.hpp"
-#include "logger.hpp"
+#include "utilities/generator.hpp"
+#include "utilities/logger.hpp"
 
 NeuralNetworkHandler::NeuralNetworkHandler()
 {}
@@ -88,8 +88,9 @@ void NeuralNetworkHandler::create(std::size_t input_size, std::size_t output_siz
         break;
     case Type::TwoHiddenLayers:
         nn_.add(NeuralNetwork::Layer::Hidden, HIDDEN_LAYER_SIZE)
-           .setFunction(++currentLayer, NeuralNetwork::TFunction::Sigmoid)
-           .setFunction(++currentLayer, NeuralNetwork::TFunction::Sigmoid);
+           .setFunction(1, NeuralNetwork::TFunction::Sigmoid)
+           .setFunction(2, NeuralNetwork::TFunction::Sigmoid);
+        currentLayer += 2;
         break;
     }
     nn_.add(NeuralNetwork::Layer::Output, output_size)

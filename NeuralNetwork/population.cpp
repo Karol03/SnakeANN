@@ -1,8 +1,8 @@
 #include <algorithm>
 #include <utility>
 
-#include "logger.hpp"
-#include "generator.hpp"
+#include "utilities/generator.hpp"
+#include "utilities/logger.hpp"
 #include "population.hpp"
 
 #define RETURN_IF_NOT_CREATED if(not isCreated()) return *this;
