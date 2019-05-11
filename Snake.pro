@@ -15,7 +15,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        main.cpp
+        main.cpp \
+    NeuralNetwork/member.cpp \
+    NeuralNetwork/neuralnetwork.cpp \
+    NeuralNetwork/neuralnetworkhandler.cpp \
+    NeuralNetwork/population.cpp \
+    utilities/generator.cpp \
+    utilities/logger.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -29,3 +35,11 @@ LIBS += -LC:\SFML-2.5.1\lib\
 
 CONFIG(debug, debug|relase): LIBS += -lsfml-audio-d -lsfml-system-d -lsfml-network-d -lsfml-main-d -lsfml-window-d -lsfml-graphics-d
 CONFIG(debug, debug|relase): LIBS += -lsfml-audio -lsfml-system -lsfml-network -lsfml-main -lsfml-window -lsfml-graphics
+
+HEADERS += \
+    NeuralNetwork/member.hpp \
+    NeuralNetwork/neuralnetwork.hpp \
+    NeuralNetwork/neuralnetworkhandler.hpp \
+    NeuralNetwork/population.hpp \
+    utilities/generator.hpp \
+    utilities/logger.hpp
