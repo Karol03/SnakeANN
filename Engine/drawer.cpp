@@ -1,3 +1,4 @@
+#include <cmath>
 #include <numeric>
 #include <SFML/Graphics.hpp>
 
@@ -53,8 +54,9 @@ Direction oposite(Direction direction)
 
 }  // namespace detail
 
-Drawer::Drawer()
-    : window_(sf::VideoMode(STAGE_WIDTH*TEXTURE_WIDTH, STAGE_HEIGHT*TEXTURE_HEIGHT), TITLE)
+Drawer::Drawer(bool& isCloseWindowGame)
+    : isCloseWindowGame_(isCloseWindowGame)
+    , window_(sf::VideoMode(STAGE_WIDTH*TEXTURE_WIDTH, STAGE_HEIGHT*TEXTURE_HEIGHT), TITLE)
 {
     loadTextures();
 }
@@ -115,6 +117,7 @@ void Drawer::draw(Stage& stage)
             if (event.type == sf::Event::Closed)
             {
                 LOG_INFO("Close window event handled");
+                isCloseWindowGame_ = true;
                 window_.close();
             }
         }
@@ -169,9 +172,6 @@ void Drawer::drawSnakeHead(const Snake& snake)
     }
     head.setPosition(HEAD_X_POSITION, HEAD_Y_POSITION);
     rotate(head, angle);
-    LOG_DEBUG("Head position on_stage: [", snake.getHead().x, ", ",
-              snake.getHead().y, "] on_window: [",
-              head.getPosition().x, ", ", head.getPosition().y, "]");
     window_.draw(head);
 }
 

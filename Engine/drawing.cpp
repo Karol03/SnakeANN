@@ -2,6 +2,7 @@
 
 Drawing::Drawing(Stage& stage)
     : State(State::TDrawingState, stage)
+    , drawer_(isCloseWindowGame_)
 {}
 
 void Drawing::execute()

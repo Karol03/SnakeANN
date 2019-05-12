@@ -15,6 +15,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    Engine/autocontroller.cpp \
     Engine/control.cpp \
     Engine/controller.cpp \
     Engine/drawer.cpp \
@@ -23,6 +24,7 @@ SOURCES += \
     Engine/game.cpp \
     Engine/snake.cpp \
     Engine/stage.cpp \
+    Engine/state.cpp \
     Engine/validation.cpp \
     NeuralNetwork/member.cpp \
     NeuralNetwork/neuralnetwork.cpp \
@@ -47,6 +49,7 @@ CONFIG(debug, debug|relase): LIBS += -lsfml-audio-d -lsfml-system-d -lsfml-netwo
 CONFIG(debug, debug|relase): LIBS += -lsfml-audio -lsfml-system -lsfml-network -lsfml-main -lsfml-window -lsfml-graphics
 
 HEADERS += \
+    Engine/autocontroller.hpp \
     Engine/control.hpp \
     Engine/controller.hpp \
     Engine/direction.h \

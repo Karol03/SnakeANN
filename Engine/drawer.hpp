@@ -31,7 +31,7 @@ public:
         LEFT_RIGHT,
         LEFT_DOWN
     };
-    Drawer();
+    Drawer(bool& isCloseWindowGame);
 
     void draw(Stage& stage);
 
@@ -50,6 +50,7 @@ private:
                                 const sf::Vector2i& second,
                                 Direction& last_direction);
 
+    bool& isCloseWindowGame_;
     sf::RenderWindow window_;
     std::map<Texture_type, sf::Texture> textures_;
 };

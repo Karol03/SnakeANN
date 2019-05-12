@@ -6,6 +6,15 @@ Control::Control(Stage& stage)
 
 void Control::execute()
 {
+    if (isFinished_)
+    {
+        if (controller_.isPlayerWantToNewGame())
+        {
+            stage_.reset();
+            isFinished_ = false;
+        }
+        return;
+    }
     controller_.control(stage_);
     stage_.nextFrame();
 }

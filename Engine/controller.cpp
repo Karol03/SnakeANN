@@ -2,7 +2,6 @@
 #include <conio.h>
 #include <windows.h>
 
-
 #include "controller.hpp"
 
 #define UP_KEY    'w'
@@ -12,15 +11,57 @@
 #define NEW_GAME  'n'
 
 Controller::Controller()
-    :lastChar_(UP_KEY)
+    : isAutoPlay_(false)
+    , lastChar_(UP_KEY)
 {}
 
 void Controller::control(Stage& stage)
 {
     Sleep(100);
+    int c;
+    if (isAutoPlay_)
+    {
+        c = autoControl(stage);
+    }
+    else
+    {
+        c = manualControl(stage);
+    }
+    lastChar_ = c;
+    stage.getSnake().setNewDirection(key_to_direction(c));
+}
+
+bool Controller::isPlayerWantToNewGame()
+{
+    if (isAutoPlay_)
+    {
+        return true;
+    }
+    if (kbhit())
+    {
+        return getch() == NEW_GAME;
+    }
+    return false;
+}
+
+int Controller::autoControl(Stage& stage)
+{
+    int c = autoController_.play(stage);
+    const auto currentDirection = stage.getSnake().getDirection();
+    if (not isValid(c) or
+            lastChar_ == c or
+            (opositKey(c) == direction_to_key(currentDirection)))
+    {
+        return lastChar_;
+    }
+    return c;
+}
+
+int Controller::manualControl(Stage& stage)
+{
     if (not kbhit())
     {
-        return;
+        return lastChar_;
     }
     int c = getch();
     const auto currentDirection = stage.getSnake().getDirection();
@@ -32,16 +73,15 @@ void Controller::control(Stage& stage)
         {
             LOG_INFO("Invalid key [", c, "]");
         }
-        return;
+        return lastChar_;
     }
     if (c == NEW_GAME)
     {
         lastChar_ = UP_KEY;
         stage.reset();
-        return;
+        return lastChar_;
     }
-    lastChar_ = c;
-    stage.getSnake().setNewDirection(key_to_direction(c));
+    return c;
 }
 
 bool Controller::isValid(int c) const

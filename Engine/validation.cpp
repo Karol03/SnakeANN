@@ -6,6 +6,10 @@ Validation::Validation(Stage& stage)
 
 void Validation::execute()
 {
+    if (isFinished_)
+    {
+        return;
+    }
     const Snake& snake = stage_.getSnake();
     const auto snakeEatItself = snake.isItselfEat();
     const auto snakeLeftStage = isHeadOutsideStage(snake.getHead(), stage_.edge());

@@ -14,7 +14,7 @@ public:
 
     State(Type type, Stage& stage)
         : type(type)
-        , isFinished_(false)
+        , isCloseWindowGame_(false)
         , stage_(stage)
     {}
     virtual ~State() = default;
@@ -23,9 +23,13 @@ public:
     virtual Type next() = 0;
     virtual bool isFinished() const final
     { return isFinished_; }
+    virtual bool isCloseWindowGame() const final
+    { return isCloseWindowGame_; }
 
     const Type type;
+
 protected:
-    bool isFinished_;
+    bool isCloseWindowGame_;
     Stage& stage_;
+    static bool isFinished_;
 };

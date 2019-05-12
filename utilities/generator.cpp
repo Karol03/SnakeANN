@@ -1,19 +1,21 @@
 #include <algorithm>
+#include <ctime>
 
 #include "generator.hpp"
-
-const int MINMUM_INT     = 0;
-const int MAXIMUM_INT    = 1000;
-const double LOWER_BOUND = -0.5;
-const double UPPER_BOUND = 0.5;
-
-Generator::Generator()
-{}
+#include "logger.hpp"
 
 std::random_device Generator::rd;
-std::default_random_engine Generator::re(rd());
-std::uniform_real_distribution<double> Generator::unif(LOWER_BOUND, UPPER_BOUND);
-std::uniform_int_distribution<int> Generator::dist(MINMUM_INT, MAXIMUM_INT);
+std::mt19937 Generator::mt_gen(rd());
+
+void Generator::initialize()
+{
+    static bool initialize = false;
+    if (not initialize)
+    {
+        std::srand(static_cast<unsigned>(std::time(nullptr)));
+        initialize = true;
+    }
+}
 
 std::vector<int> Generator::generate_int_vector(size_t size)
 {
@@ -27,21 +29,21 @@ void Generator::generate_random_vector(std::vector<double>& vec,
                                        std::size_t size)
 {
     std::vector<double> v(size);
-    std::generate(v.begin(), v.end(), [&]() { return unif(re); });
+    std::generate(v.begin(), v.end(), get_random);
     std::swap(v, vec);
 }
 
 double Generator::get_random()
 {
-    return unif(re);
+    return double(rand()) / (double(RAND_MAX) + 1.0) - 0.5;
 }
 
 int Generator::get_random_int(int min, int max)
 {
-    return (dist(re)+min)%(max-min);
+    return (rand()+min)%(max-min);
 }
 
 void Generator::shuffle(std::vector<int>& vec)
 {
-    std::shuffle(vec.begin(), vec.end(), re);
+    std::shuffle(vec.begin(), vec.end(), mt_gen);
 }

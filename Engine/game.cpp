@@ -20,7 +20,7 @@ int Game::run()
         currentState_ = states_[currentState_]->next();
         states_[currentState_]->execute();
     }
-    while (not states_[currentState_]->isFinished());
+    while (not states_[currentState_]->isCloseWindowGame());
     LOG_INFO("Program finish work!");
     return 0;
 }
