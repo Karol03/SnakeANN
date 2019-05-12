@@ -1,12 +1,10 @@
 #include <QCoreApplication>
-
-#include <SFML/Graphics.hpp>
-#include <iostream>
+#include "Engine/game.hpp"
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-    sf::Window window(sf::VideoMode(800, 600), "My window");
-
+    Game game;
+    game.run();
     return a.exec();
 }

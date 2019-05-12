@@ -20,6 +20,8 @@ public:
     const sf::Vector2i& getHead() const;
     const sf::Vector2i& getTail();
     const std::vector<sf::Vector2i>& position();
+    sf::Vector2i nextHeadPosition() const;
+
 private:
     void setHead();
     void moveHead();

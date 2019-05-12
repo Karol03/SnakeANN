@@ -25,28 +25,29 @@ const sf::Vector2i& Snake::getTail() {
 }
 
 void Snake::setHead() {
-    head_ = position_.back();
+    head_ = position_.front();
 }
 
 const std::vector<sf::Vector2i>& Snake::position() {
     return position_;
 }
 
-void Snake::moveHead() {
+sf::Vector2i Snake::nextHeadPosition() const {
     switch(direction_){
         case Direction::Down:
-            position_.insert(position_.begin(), sf::Vector2i(head_.x, head_.y + 1)); //dodaje głowę na początek
-            break;
+            return sf::Vector2i(head_.x, head_.y + 1);
         case Direction::Up:
-            position_.insert(position_.begin(), sf::Vector2i(head_.x, head_.y - 1)); //dodaje głowę na początek
-            break;
+            return sf::Vector2i(head_.x, head_.y - 1);
         case Direction::Left:
-            position_.insert(position_.begin(), sf::Vector2i(head_.x - 1, head_.y)); //dodaje głowę na początek
-            break;
+            return sf::Vector2i(head_.x - 1, head_.y);
         case Direction::Right:
-            position_.insert(position_.begin(), sf::Vector2i(head_.x + 1, head_.y + 1)); //dodaje głowę na początek
-            break;
+            return sf::Vector2i(head_.x + 1, head_.y);
     }
+}
+
+void Snake::moveHead() {
+    auto head = nextHeadPosition();
+    position_.insert(position_.begin(), head); //dodaje głowę na początek
 }
 
 void Snake::moveTail() {

@@ -15,9 +15,11 @@ public:
     const Feed& getFeed() const;
     Snake& getSnake();
     const Snake& getSnake() const;
+    sf::Vector2i edge() const;
+
 private:
     bool isSnakeGrown_;
-    sf::Vector2f stageEdge_;
+    const sf::Vector2i stageEdge_;
     Snake snake_;
     Feed feed_;
 };

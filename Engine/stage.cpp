@@ -1,7 +1,14 @@
 #include "stage.h"
 
-Stage::Stage() : snake_( Snake() ), feed_( Feed( ))
+#define X_WIDTH  30
+#define Y_HEIGHT 40
+
+Stage::Stage() : stageEdge_(X_WIDTH, Y_HEIGHT), snake_( Snake() ), feed_( Feed( ))
+{}
+
+sf::Vector2i Stage::edge() const
 {
+    return stageEdge_;
 }
 
 Snake& Stage::getSnake() {
@@ -21,21 +28,15 @@ const Feed& Stage::getFeed() const {
 }
 
 bool Stage::isSnakeGrown() const {
-    return (getSnake().getHead() == getFeed().position());
+    return (getSnake().nextHeadPosition() == getFeed().position());
 }
 
-//void Stage::nextFrame() {
-//    snake_.move();
-//    isSnakeGrown_ = isSnakeGrown();
-//    if(isSnakeGrown_)
-//    {
-//        if(getSnake().getTail() == getFeed().position())
-//        {
-//            getSnake().growUp();
-//        }
-//        else
-//        {
-//            getSnake().move();
-//        }
-//    }
-//}
+void Stage::nextFrame() {
+    if(isSnakeGrown())
+    {
+        getSnake().growUp();
+        LOG_DEBUG("Snake eat feed");
+        return;
+    }
+    getSnake().move();
+}

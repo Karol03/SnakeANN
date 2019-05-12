@@ -25,7 +25,12 @@ SOURCES += \
     utilities/logger.cpp \
     Engine/feed.cpp \
     Engine/snake.cpp \
-    utilities/filehandler.cpp
+    utilities/filehandler.cpp \
+    Engine/drawing.cpp \
+    Engine/control.cpp \
+    Engine/validation.cpp \
+    Engine/game.cpp \
+    Engine/controller.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -53,4 +58,10 @@ HEADERS += \
     Engine/object.h \
     Engine/objectype.h \
     Engine/snake.h \
-    utilities/filehandler.hpp
+    utilities/filehandler.hpp \
+    Engine/state.hpp \
+    Engine/drawing.hpp \
+    Engine/control.hpp \
+    Engine/validation.hpp \
+    Engine/game.hpp \
+    Engine/controller.hpp
