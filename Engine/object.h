@@ -12,7 +12,7 @@ protected:
 public:
     virtual ~Object() {}
 
-    const ObjectType type;
+    ObjectType type;
 };
 
 #endif // OBJECT_H

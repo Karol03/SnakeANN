@@ -6,6 +6,15 @@ Stage::Stage()
     feed_.randomPosition(snake_.position(), STAGE_WIDTH, STAGE_HEIGHT);
 }
 
+void Stage::reset()
+{
+    Snake newSnake(STAGE_WIDTH, STAGE_HEIGHT);
+    Feed newFeed;
+    std::swap(snake_, newSnake);
+    std::swap(feed_, newFeed);
+    feed_.randomPosition(snake_.position(), STAGE_WIDTH, STAGE_HEIGHT);
+}
+
 sf::Vector2i Stage::edge() const
 {
     return stageEdge_;
@@ -34,10 +43,10 @@ bool Stage::isSnakeGrown() const {
 void Stage::nextFrame() {
     if(isSnakeGrown())
     {
-        getSnake().growUp();
-        feed_.randomPosition(getSnake().position(), STAGE_WIDTH, STAGE_HEIGHT);
         LOG_DEBUG("Snake eat feed and grown up");
+        snake_.growUp();
+        feed_.randomPosition(snake_.position(), STAGE_WIDTH, STAGE_HEIGHT);
         return;
     }
-    getSnake().move();
+    snake_.move();
 }

@@ -28,7 +28,7 @@ std::string print(const NeuralNetwork::Neurons& v)
 
 void NeuralNetwork::mutate(double& neuron)
 {
-    neuron = Generator::get_random(-0.5, 0.5);
+    neuron = Generator::get_random();
 }
 
 NeuralNetwork::NeuralNetwork()

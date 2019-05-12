@@ -19,6 +19,7 @@ public:
     Snake& getSnake();
     const Snake& getSnake() const;
     sf::Vector2i edge() const;
+    void reset();
 
 private:
     bool isSnakeGrown_;

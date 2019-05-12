@@ -102,7 +102,7 @@ void Drawer::loadTextures()
         throw std::runtime_error("Error while loading textures");
     }
     textures_[Feed_egg] = texture_feed;
-
+    LOG_INFO("All textures loaded");
 }
 
 void Drawer::draw(Stage& stage)

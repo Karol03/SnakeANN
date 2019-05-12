@@ -1,5 +1,7 @@
 #include <vector>
+#include <conio.h>
 #include <windows.h>
+
 
 #include "controller.hpp"
 
@@ -7,6 +9,7 @@
 #define DOWN_KEY  's'
 #define RIGHT_KEY 'd'
 #define LEFT_KEY  'a'
+#define NEW_GAME  'n'
 
 Controller::Controller()
     :lastChar_(UP_KEY)
@@ -14,8 +17,12 @@ Controller::Controller()
 
 void Controller::control(Stage& stage)
 {
-    Sleep(1000);
-    int c = getchar();
+    Sleep(100);
+    if (not kbhit())
+    {
+        return;
+    }
+    int c = getch();
     const auto currentDirection = stage.getSnake().getDirection();
     if (not isValid(c) or
             lastChar_ == c or
@@ -23,8 +30,14 @@ void Controller::control(Stage& stage)
     {
         if (not isValid(c))
         {
-            LOG_ERROR("Invalid key [", c, "]");
+            LOG_INFO("Invalid key [", c, "]");
         }
+        return;
+    }
+    if (c == NEW_GAME)
+    {
+        lastChar_ = UP_KEY;
+        stage.reset();
         return;
     }
     lastChar_ = c;
@@ -33,7 +46,7 @@ void Controller::control(Stage& stage)
 
 bool Controller::isValid(int c) const
 {
-    std::vector<int> chars{DOWN_KEY, UP_KEY, RIGHT_KEY, LEFT_KEY};
+    std::vector<int> chars{DOWN_KEY, UP_KEY, RIGHT_KEY, LEFT_KEY, NEW_GAME};
     return std::find(chars.begin(), chars.end(), c) != chars.end();
 }
 
