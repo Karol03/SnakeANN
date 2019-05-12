@@ -15,13 +15,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        main.cpp \
+    Engine/stage.cpp \
+    main.cpp \
     NeuralNetwork/member.cpp \
     NeuralNetwork/neuralnetwork.cpp \
     NeuralNetwork/neuralnetworkhandler.cpp \
     NeuralNetwork/population.cpp \
     utilities/generator.cpp \
-    utilities/logger.cpp
+    utilities/logger.cpp \
+    Engine/feed.cpp \
+    Engine/snake.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -37,9 +40,15 @@ CONFIG(debug, debug|relase): LIBS += -lsfml-audio-d -lsfml-system-d -lsfml-netwo
 CONFIG(debug, debug|relase): LIBS += -lsfml-audio -lsfml-system -lsfml-network -lsfml-main -lsfml-window -lsfml-graphics
 
 HEADERS += \
+    Engine/stage.h \
     NeuralNetwork/member.hpp \
     NeuralNetwork/neuralnetwork.hpp \
     NeuralNetwork/neuralnetworkhandler.hpp \
     NeuralNetwork/population.hpp \
     utilities/generator.hpp \
-    utilities/logger.hpp
+    utilities/logger.hpp \
+    Engine/direction.h \
+    Engine/feed.h \
+    Engine/object.h \
+    Engine/objectype.h \
+    Engine/snake.h
