@@ -30,7 +30,25 @@ SOURCES += \
     Engine/control.cpp \
     Engine/validation.cpp \
     Engine/game.cpp \
-    Engine/controller.cpp
+    Engine/controller.cpp \
+    Engine/drawer.cpp \
+    Engine/control.cpp \
+    Engine/controller.cpp \
+    Engine/drawer.cpp \
+    Engine/drawing.cpp \
+    Engine/feed.cpp \
+    Engine/game.cpp \
+    Engine/snake.cpp \
+    Engine/stage.cpp \
+    Engine/validation.cpp \
+    NeuralNetwork/member.cpp \
+    NeuralNetwork/neuralnetwork.cpp \
+    NeuralNetwork/neuralnetworkhandler.cpp \
+    NeuralNetwork/population.cpp \
+    utilities/filehandler.cpp \
+    utilities/generator.cpp \
+    utilities/logger.cpp \
+    main.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -64,4 +82,32 @@ HEADERS += \
     Engine/control.hpp \
     Engine/validation.hpp \
     Engine/game.hpp \
-    Engine/controller.hpp
+    Engine/controller.hpp \
+    Engine/drawer.hpp \
+    Engine/control.hpp \
+    Engine/controller.hpp \
+    Engine/direction.h \
+    Engine/drawer.hpp \
+    Engine/drawing.hpp \
+    Engine/feed.h \
+    Engine/game.hpp \
+    Engine/object.h \
+    Engine/objectype.h \
+    Engine/snake.h \
+    Engine/stage.h \
+    Engine/state.hpp \
+    Engine/validation.hpp \
+    NeuralNetwork/member.hpp \
+    NeuralNetwork/neuralnetwork.hpp \
+    NeuralNetwork/neuralnetworkhandler.hpp \
+    NeuralNetwork/population.hpp \
+    utilities/filehandler.hpp \
+    utilities/generator.hpp \
+    utilities/logger.hpp
+
+DISTFILES += \
+    graphics/feed.png \
+    graphics/head.png \
+    graphics/tail_edge.png \
+    graphics/tail_end.png \
+    graphics/tail_straight.png

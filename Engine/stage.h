@@ -1,6 +1,9 @@
 #ifndef STAGE_H
 #define STAGE_H
 
+#define STAGE_WIDTH  30
+#define STAGE_HEIGHT 40
+
 #include "snake.h"
 #include "feed.h"
 #include <SFML/Graphics.hpp>

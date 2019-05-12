@@ -1,9 +1,7 @@
 #include "stage.h"
 
-#define X_WIDTH  30
-#define Y_HEIGHT 40
-
-Stage::Stage() : stageEdge_(X_WIDTH, Y_HEIGHT), snake_( Snake() ), feed_( Feed( ))
+Stage::Stage()
+    : stageEdge_(STAGE_WIDTH, STAGE_HEIGHT), snake_( Snake() ), feed_( Feed( ))
 {}
 
 sf::Vector2i Stage::edge() const
@@ -35,7 +33,7 @@ void Stage::nextFrame() {
     if(isSnakeGrown())
     {
         getSnake().growUp();
-        LOG_DEBUG("Snake eat feed");
+        LOG_DEBUG("Snake eat feed and grown up");
         return;
     }
     getSnake().move();

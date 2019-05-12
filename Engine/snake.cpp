@@ -12,6 +12,11 @@ void Snake::setNewDirection(Direction newDirection) {
     this->direction_ = newDirection;
 }
 
+Direction Snake::getDirection() const
+{
+    return direction_;
+}
+
 const sf::Vector2i& Snake::getHead() {
     return head_;
 }
@@ -28,7 +33,7 @@ void Snake::setHead() {
     head_ = position_.front();
 }
 
-const std::vector<sf::Vector2i>& Snake::position() {
+const std::vector<sf::Vector2i>& Snake::position() const {
     return position_;
 }
 

@@ -13,13 +13,14 @@ public:
     Snake();
     ~Snake();
     void setNewDirection(Direction newDirection);
+    Direction getDirection() const;
     void move();
     void growUp();
     bool isItselfEat() const;
     const sf::Vector2i& getHead();
     const sf::Vector2i& getHead() const;
     const sf::Vector2i& getTail();
-    const std::vector<sf::Vector2i>& position();
+    const std::vector<sf::Vector2i>& position() const;
     sf::Vector2i nextHeadPosition() const;
 
 private:

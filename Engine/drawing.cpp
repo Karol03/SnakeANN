@@ -6,8 +6,7 @@ Drawing::Drawing(Stage& stage)
 
 void Drawing::execute()
 {
-    LOG_DEBUG();
-
+    drawer_.draw(stage_);
 }
 
 State::Type Drawing::next()

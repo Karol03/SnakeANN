@@ -1,4 +1,5 @@
 #pragma once
+#include "drawer.hpp"
 #include "state.hpp"
 
 
@@ -9,4 +10,7 @@ public:
 
     void execute() override;
     Type next() override;
+
+private:
+    Drawer drawer_;
 };
