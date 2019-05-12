@@ -7,18 +7,18 @@ Feed::Feed() : Object (ObjectType::TFeed) {
 Feed::~Feed() {
 }
 
-bool Feed::compareVectors(const std::vector<sf::Vector2i> &vec1, const sf::Vector2i &vec2) {
-    for(const auto& position : vec1)
-        if(position == vec2)
-            return true;
-    return false;
+bool Feed::compareVectors(const std::vector<sf::Vector2i> &vec1,
+                          const sf::Vector2i &vec2) {
+    return std::find(vec1.begin(), vec1.end(), vec2) != vec1.end();
 }
 
-void Feed::randomPosition(const std::vector<sf::Vector2i> & snake) {
+void Feed::randomPosition(const std::vector<sf::Vector2i> & snake,
+                          const int max_width,
+                          const int max_height) {
     sf::Vector2i feedPlace;
     do{
-        feedPlace.x = static_cast<int>(Generator::get_random(0.0, 20.0));
-        feedPlace.y = static_cast<int>(Generator::get_random(0.0, 20.0));
+        feedPlace.x = Generator::get_random_int(0, max_width);
+        feedPlace.y = Generator::get_random_int(0, max_height);
     } while(compareVectors(snake, feedPlace));
 
     this->position_ = feedPlace;

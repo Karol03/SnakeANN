@@ -6,21 +6,16 @@ class Drawer
 {
     enum Texture_type
     {
-        Snake_head,
+        Snake_head = 0,
         Snake_tail_edge,
         Snake_tail_straight,
         Snake_tail_end,
         Feed_egg
     };
-
-    enum Part_type
-    {
-
-    };
-
+public:
     enum Direction_type
     {
-        UP_DOWN,
+        UP_DOWN = 0,
         UP_RIGHT,
         UP_LEFT,
 
@@ -36,8 +31,6 @@ class Drawer
         LEFT_RIGHT,
         LEFT_DOWN
     };
-
-public:
     Drawer();
 
     void draw(Stage& stage);
@@ -47,8 +40,15 @@ private:
     void drawSnake(const Snake& snake);
     void drawFeed(const Feed& feed);
     void drawSnakeHead(const Snake& snake);
-    void drawSnakeTail(const Snake& snake);
-    Part_type getPart(const Snake& snake);
+    void drawSnakeTailEnd(const Snake& snake);
+    void drawTailElement(const sf::Vector2i& element,
+                         Direction_type direction);
+    void rotate(sf::Sprite& sprite, float angle);
+    Direction_type getDirection(const sf::Vector2i& first,
+                                const sf::Vector2i& second);
+    Direction_type getDirection(const sf::Vector2i& first,
+                                const sf::Vector2i& second,
+                                Direction& last_direction);
 
     sf::RenderWindow window_;
     std::map<Texture_type, sf::Texture> textures_;

@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "state.hpp"
-#include "Stage.hpp"
+#include "stage.h"
 
 class Game
 {

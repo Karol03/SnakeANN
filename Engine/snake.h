@@ -10,7 +10,7 @@
 
 class Snake : private Object {
 public:
-    Snake();
+    Snake(int stage_width, int stage_height);
     ~Snake();
     void setNewDirection(Direction newDirection);
     Direction getDirection() const;
@@ -24,6 +24,7 @@ public:
     sf::Vector2i nextHeadPosition() const;
 
 private:
+    void createBodyOnCenterStage(int stage_width, int stage_height);
     void setHead();
     void moveHead();
     void moveTail();

@@ -10,5 +10,6 @@ public:
     static void generate_random_vector(std::vector<double>& vec,
                                        std::size_t size);
     static double get_random(double min, double max);
+    static int get_random_int(int min, int max);
     static void shuffle(std::vector<int>& vec);
 };

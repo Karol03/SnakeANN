@@ -1,8 +1,10 @@
 #include "stage.h"
 
 Stage::Stage()
-    : stageEdge_(STAGE_WIDTH, STAGE_HEIGHT), snake_( Snake() ), feed_( Feed( ))
-{}
+    : stageEdge_(STAGE_WIDTH, STAGE_HEIGHT), snake_(STAGE_WIDTH, STAGE_HEIGHT), feed_( Feed( ))
+{
+    feed_.randomPosition(snake_.position(), STAGE_WIDTH, STAGE_HEIGHT);
+}
 
 sf::Vector2i Stage::edge() const
 {
@@ -33,6 +35,7 @@ void Stage::nextFrame() {
     if(isSnakeGrown())
     {
         getSnake().growUp();
+        feed_.randomPosition(getSnake().position(), STAGE_WIDTH, STAGE_HEIGHT);
         LOG_DEBUG("Snake eat feed and grown up");
         return;
     }

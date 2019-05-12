@@ -2,7 +2,7 @@ QT -= gui
 
 CONFIG += c++14 console
 CONFIG -= app_bundle
-
+CONFIG += object_parallel_to_source
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -15,23 +15,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    Engine/stage.cpp \
-    main.cpp \
-    NeuralNetwork/member.cpp \
-    NeuralNetwork/neuralnetwork.cpp \
-    NeuralNetwork/neuralnetworkhandler.cpp \
-    NeuralNetwork/population.cpp \
-    utilities/generator.cpp \
-    utilities/logger.cpp \
-    Engine/feed.cpp \
-    Engine/snake.cpp \
-    utilities/filehandler.cpp \
-    Engine/drawing.cpp \
-    Engine/control.cpp \
-    Engine/validation.cpp \
-    Engine/game.cpp \
-    Engine/controller.cpp \
-    Engine/drawer.cpp \
     Engine/control.cpp \
     Engine/controller.cpp \
     Engine/drawer.cpp \
@@ -45,9 +28,9 @@ SOURCES += \
     NeuralNetwork/neuralnetwork.cpp \
     NeuralNetwork/neuralnetworkhandler.cpp \
     NeuralNetwork/population.cpp \
-    utilities/filehandler.cpp \
     utilities/generator.cpp \
     utilities/logger.cpp \
+    utilities/filehandler.cpp \
     main.cpp
 
 # Default rules for deployment.
@@ -64,26 +47,6 @@ CONFIG(debug, debug|relase): LIBS += -lsfml-audio-d -lsfml-system-d -lsfml-netwo
 CONFIG(debug, debug|relase): LIBS += -lsfml-audio -lsfml-system -lsfml-network -lsfml-main -lsfml-window -lsfml-graphics
 
 HEADERS += \
-    Engine/stage.h \
-    NeuralNetwork/member.hpp \
-    NeuralNetwork/neuralnetwork.hpp \
-    NeuralNetwork/neuralnetworkhandler.hpp \
-    NeuralNetwork/population.hpp \
-    utilities/generator.hpp \
-    utilities/logger.hpp \
-    Engine/direction.h \
-    Engine/feed.h \
-    Engine/object.h \
-    Engine/objectype.h \
-    Engine/snake.h \
-    utilities/filehandler.hpp \
-    Engine/state.hpp \
-    Engine/drawing.hpp \
-    Engine/control.hpp \
-    Engine/validation.hpp \
-    Engine/game.hpp \
-    Engine/controller.hpp \
-    Engine/drawer.hpp \
     Engine/control.hpp \
     Engine/controller.hpp \
     Engine/direction.h \

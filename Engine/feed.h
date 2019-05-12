@@ -9,7 +9,9 @@ class Feed : private Object {
 public:
     Feed();
     ~Feed();
-    void randomPosition(const std::vector<sf::Vector2i> & snake);
+    void randomPosition(const std::vector<sf::Vector2i> & snake,
+                        const int max_width,
+                        const int max_height);
     const sf::Vector2i& position();
     const sf::Vector2i& position() const;
 private:

@@ -1,7 +1,7 @@
-#include "generator.hpp"
-
 #include <algorithm>
 #include <random>
+
+#include "generator.hpp"
 
 Generator::Generator()
 {}
@@ -35,6 +35,14 @@ double Generator::get_random(double min, double max)
     std::uniform_real_distribution<double> unif(min, max);
     std::default_random_engine re;
     return unif(re);
+}
+
+int Generator::get_random_int(int min, int max)
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> dist(min, max);
+    return dist(gen);
 }
 
 void Generator::shuffle(std::vector<int>& vec)

@@ -1,11 +1,28 @@
 #include "snake.h"
+#include "utilities/generator.hpp"
 
-Snake::Snake() : Object (ObjectType::TSnake) {
-
+Snake::Snake(int stage_width, int stage_height)
+    : Object (ObjectType::TSnake)
+    , direction_(Direction::Up)
+{
+    createBodyOnCenterStage(stage_width, stage_height);
 }
 
 Snake::~Snake() {
 
+}
+
+void Snake::createBodyOnCenterStage(int stage_width, int stage_height)
+{
+    auto point_first  = sf::Vector2i(stage_width/2, stage_height/2-1);
+    auto point_second = sf::Vector2i(stage_width/2, stage_height/2);
+    auto point_third  = sf::Vector2i(stage_width/2, stage_height/2+1);
+    auto point_fourth = sf::Vector2i(stage_width/2, stage_height/2+2);
+    position_.push_back(point_first);
+    position_.push_back(point_second);
+    position_.push_back(point_third);
+    position_.push_back(point_fourth);
+    setHead();
 }
 
 void Snake::setNewDirection(Direction newDirection) {
@@ -48,6 +65,8 @@ sf::Vector2i Snake::nextHeadPosition() const {
         case Direction::Right:
             return sf::Vector2i(head_.x + 1, head_.y);
     }
+    LOG_ERROR("Invalid head position");
+    throw std::runtime_error("Invalid head position");
 }
 
 void Snake::moveHead() {
@@ -76,6 +95,6 @@ void Snake::growUp() {
 }
 
 bool Snake::isItselfEat() const {
-    return std::any_of(position_.begin(), position_.end(),
+    return std::any_of(position_.begin()+1, position_.end(),
                        [this](sf::Vector2i tmp1) { return tmp1 == this->head_; });
 }
