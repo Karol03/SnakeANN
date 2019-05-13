@@ -13,19 +13,20 @@ public:
         double accuracy;
     };
 
-    Member();
-    Member(double mutation_ratio, size_t input_size, size_t output_size,
+    Member(unsigned id);
+    Member(unsigned id, double mutation_ratio, size_t input_size, size_t output_size,
            std::function<double(const Member&)> fitness_function);
 
     Member& initialize(double mutation_ratio, size_t input_size, size_t output_size,
                        std::function<double(const Member&)> fitness_function);
-    Member& train(const std::vector<int>& input_data);
+    Member& train(const NeuralNetwork::Neurons& input_data);
     NeuralNetwork::Output prediction() const;
     double fitness() const;
     bool isDead() const;
     void isDead(bool isdead);
     void mix(Member& member);
 
+    unsigned id;
 private:
     bool isInitialized() const;
 

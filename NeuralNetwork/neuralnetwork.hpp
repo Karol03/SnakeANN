@@ -91,7 +91,7 @@ public:
     NeuralNetwork& create();
     NeuralNetwork& reset();
     NeuralNetwork& setFunction(std::size_t layer, TFunction function);
-    NeuralNetwork& train(const std::vector<int>& input_data);
+    NeuralNetwork& train(Neurons data_as_double);
 
     int layerSize(std::size_t i) const;
     size_t layersNumber() const { return layers_.size(); }

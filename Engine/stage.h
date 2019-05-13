@@ -1,8 +1,8 @@
 #ifndef STAGE_H
 #define STAGE_H
 
-#define STAGE_WIDTH  30
-#define STAGE_HEIGHT 40
+#define STAGE_WIDTH  10
+#define STAGE_HEIGHT 10
 
 #include "snake.h"
 #include "feed.h"

@@ -4,31 +4,42 @@
 
 #include "controller.hpp"
 
+#define AUTO_PLAY_ON false
+
 #define UP_KEY    'w'
 #define DOWN_KEY  's'
 #define RIGHT_KEY 'd'
 #define LEFT_KEY  'a'
 #define NEW_GAME  'n'
 
-Controller::Controller()
-    : isAutoPlay_(false)
+Controller::Controller(Stage& stage)
+    : isAutoPlay_(AUTO_PLAY_ON)
+    , stage_(stage)
     , lastChar_(UP_KEY)
-{}
+    , autoController_(stage)
+{
+    LOG_INFO();
+    if (isAutoPlay_)
+    {
+        LOG_INFO("Auto control turn on, initialize auto_controller");
+        autoController_.initialize();
+    }
+}
 
-void Controller::control(Stage& stage)
+void Controller::control()
 {
     Sleep(100);
     int c;
     if (isAutoPlay_)
     {
-        c = autoControl(stage);
+        c = autoControl();
     }
     else
     {
-        c = manualControl(stage);
+        c = manualControl();
     }
     lastChar_ = c;
-    stage.getSnake().setNewDirection(key_to_direction(c));
+    stage_.getSnake().setNewDirection(key_to_direction(c));
 }
 
 bool Controller::isPlayerWantToNewGame()
@@ -44,10 +55,10 @@ bool Controller::isPlayerWantToNewGame()
     return false;
 }
 
-int Controller::autoControl(Stage& stage)
+int Controller::autoControl()
 {
-    int c = autoController_.play(stage);
-    const auto currentDirection = stage.getSnake().getDirection();
+    int c = autoController_.play();
+    const auto currentDirection = stage_.getSnake().getDirection();
     if (not isValid(c) or
             lastChar_ == c or
             (opositKey(c) == direction_to_key(currentDirection)))
@@ -57,14 +68,14 @@ int Controller::autoControl(Stage& stage)
     return c;
 }
 
-int Controller::manualControl(Stage& stage)
+int Controller::manualControl()
 {
     if (not kbhit())
     {
         return lastChar_;
     }
     int c = getch();
-    const auto currentDirection = stage.getSnake().getDirection();
+    const auto currentDirection = stage_.getSnake().getDirection();
     if (not isValid(c) or
             lastChar_ == c or
             (opositKey(c) == direction_to_key(currentDirection)))
@@ -78,7 +89,7 @@ int Controller::manualControl(Stage& stage)
     if (c == NEW_GAME)
     {
         lastChar_ = UP_KEY;
-        stage.reset();
+        stage_.reset();
         return lastChar_;
     }
     return c;

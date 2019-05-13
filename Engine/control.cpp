@@ -2,6 +2,7 @@
 
 Control::Control(Stage& stage)
     : State(State::TControlState, stage)
+    , controller_(stage)
 {}
 
 void Control::execute()
@@ -15,7 +16,7 @@ void Control::execute()
         }
         return;
     }
-    controller_.control(stage_);
+    controller_.control();
     stage_.nextFrame();
 }
 

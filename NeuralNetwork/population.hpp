@@ -14,17 +14,23 @@ public:
                        size_t input_size, size_t output_size,
                        std::function<double(const Member&)> fitness_function,
                        std::function<bool(const Member&)> fail_function);
-    Population& decide(const std::vector<int>& input_data);
+    Population& decide(const NeuralNetwork::Neurons& input_data);
+    Population& one_member_prediction(Member& member,
+                                      const NeuralNetwork::Neurons& input_data);
     Population& evolve();
     Population& forceEvolve();
     Population& getBestMember(std::unique_ptr<Member>&);
     Population& reset();
     Population& train_routine(
-            const std::vector<std::vector<int>>& examples,
+            const std::vector<NeuralNetwork::Neurons>& examples,
             std::function<void(Population&)> function = {});
+
+    Member& getMember(unsigned id);
+    Member& getNext(const Member& member);
 
     int livingMembers() const;
     unsigned generation() const;
+
 private:
     void sortMembersByFitness();
     void mixMembers();

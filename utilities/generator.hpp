@@ -17,8 +17,5 @@ public:
 
 private:
     static std::random_device rd;
-  //  static std::default_random_engine re;
     static std::mt19937 mt_gen;
-  //  static std::uniform_real_distribution<double> unif;
-  //  static std::uniform_int_distribution<int> dist;
 };

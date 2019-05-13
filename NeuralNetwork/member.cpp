@@ -5,12 +5,14 @@
 
 #define RETURN_IF_NOT_INITIALIZED if(not isInitialized()) { return *this; }
 
-Member::Member()
-    : isInitialized_(false)
+Member::Member(unsigned id)
+    : id(id)
+    , isInitialized_(false)
 {}
 
-Member::Member(double mutation_ratio, size_t input_size, size_t output_size,
+Member::Member(unsigned id, double mutation_ratio, size_t input_size, size_t output_size,
                std::function<double(const Member&)> fitness_function)
+    : id(id)
 {
     initialize(mutation_ratio, input_size, output_size, fitness_function);
 }
@@ -29,17 +31,17 @@ Member& Member::initialize(double mutation_ratio, size_t input_size, size_t outp
 
     mutationRatio_ = mutation_ratio;
     fitnessFunction_ = std::move(fitness_function);
-    ann_.create(input_size, output_size, NeuralNetworkHandler::Type::OneHiddenLayer);
+    ann_.create(input_size, output_size, NeuralNetworkHandler::Type::TwoHiddenLayers);
     isInitialized_ = true;
     LOG_DEBUG("Initialization complete");
     return *this;
 }
 
-Member& Member::train(const std::vector<int>& input_data)
+Member& Member::train(const NeuralNetwork::Neurons& input_data)
 {
     RETURN_IF_NOT_INITIALIZED
     ann_.train(input_data);
-    fitness_ = fitnessFunction_(*this);
+    fitness_ += fitnessFunction_(*this);
     LOG_DEBUG("Memeber train finished with fitness [", fitness_, "]");
     return *this;
 }
@@ -62,6 +64,8 @@ void Member::isDead(bool isdead)
 void Member::mix(Member& member)
 {
     const double percentageFirstNNPart = 0.7;
+    fitness_ = 0;
+    member.fitness_ = 0;
     ann_.mixNN(member.ann_, percentageFirstNNPart, mutationRatio_);
 }
 

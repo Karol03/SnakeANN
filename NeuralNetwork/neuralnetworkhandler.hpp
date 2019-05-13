@@ -20,7 +20,7 @@ public:
                double mutation_ratio);
 
     void create(std::size_t input_size, std::size_t output_size, Type type = Type::Default);
-    void train(const std::vector<int>& input_data);
+    void train(const NeuralNetwork::Neurons& input_data);
     NeuralNetwork::Output prediction() const;
 
 private:

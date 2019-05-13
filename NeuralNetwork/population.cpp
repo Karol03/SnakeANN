@@ -17,6 +17,10 @@ Population& Population::create(int population_size, double mutation_ratio,
                                std::function<double(const Member&)> fitness_function,
                                std::function<bool(const Member&)> fail_function)
 {
+    LOG_DEBUG("Start create population with",
+              " population_size = ", population_size,
+              " input_size = ", input_size,
+              " and output_size = ", output_size);
     if (not (population_size >= 2 and input_size > 0 and output_size > 0) and not isCreated_)
     {
         LOG_ERROR("Cannot create population with this properties",
@@ -30,7 +34,9 @@ Population& Population::create(int population_size, double mutation_ratio,
     failFunction_ = std::move(fail_function);
     for (auto i = 0; i < population_size; i++)
     {
-        members_.push_back(Member(mutation_ratio, input_size, output_size, fitness_function));
+        members_.push_back(
+                    Member(static_cast<unsigned>(i+1), mutation_ratio,
+                           input_size, output_size, fitness_function));
     }
     LOG_INFO("Creating done. Population have [", population_size, "] new members");
     isCreated_ = true;
@@ -90,7 +96,7 @@ void Population::mixMembers()
 }
 
 Population& Population::train_routine(
-        const std::vector<std::vector<int>>& examples,
+        const std::vector<NeuralNetwork::Neurons>& examples,
         std::function<void(Population&)> function)
 {
     RETURN_IF_NOT_CREATED
@@ -110,7 +116,7 @@ Population& Population::train_routine(
     return *this;
 }
 
-Population& Population::decide(const std::vector<int>& input_data)
+Population& Population::decide(const NeuralNetwork::Neurons& input_data)
 {
     RETURN_IF_NOT_CREATED
     if (inputSize_ != input_data.size())
@@ -131,6 +137,28 @@ Population& Population::decide(const std::vector<int>& input_data)
         }
     }
     LOG_INFO("All members were predicted decision");
+    return *this;
+}
+
+Population& Population::one_member_prediction(
+        Member& member,
+        const NeuralNetwork::Neurons& input_data)
+{
+    RETURN_IF_NOT_CREATED
+    if (inputSize_ != input_data.size())
+    {
+        LOG_ERROR("Invalid input size. Expected: ", inputSize_,
+                  " current: ", input_data.size());
+        return *this;
+    }
+    if (not member.isDead())
+    {
+        member.train(input_data);
+        if (failFunction_(member))
+        {
+            member.isDead(true);
+        }
+    }
     return *this;
 }
 
@@ -160,6 +188,50 @@ Population& Population::reset()
     generation_ = 1;
     LOG_INFO("Population cleared. Start from generation [", generation_, "]");
     return *this;
+}
+
+Member& Population::getMember(unsigned id)
+{
+    if (not isCreated_)
+    {
+        LOG_ERROR("Population uninitialized. Cannot get member");
+        throw std::runtime_error("Uninitialized population");
+    } else if (members_.empty())
+    {
+        LOG_ERROR("No members in population. Cannot get member");
+        throw std::runtime_error("No members in population");
+    }
+    if (id == 0) ++id;
+    auto it = std::find_if(members_.begin(), members_.end(),
+                           [id](const auto& member)
+                           { return id == member.id; });
+    if (it != members_.end())
+    {
+        return *it;
+    }
+    return members_.front();
+}
+
+Member& Population::getNext(const Member& member)
+{
+    if (not isCreated_)
+    {
+        LOG_ERROR("Population uninitialized. Cannot get member");
+        throw std::runtime_error("Uninitialized population");
+    } else if (members_.empty())
+    {
+        LOG_ERROR("No members in population. Cannot get member");
+        throw std::runtime_error("No members in population");
+    }
+    unsigned nextId = member.id + 1;
+    auto it = std::find_if(members_.begin(), members_.end(),
+                           [nextId](const auto& member)
+                           { return nextId == member.id; });
+    if (it != members_.end())
+    {
+        return *it;
+    }
+    return members_.front();
 }
 
 void Population::sortMembersByFitness()

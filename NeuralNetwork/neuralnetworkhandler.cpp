@@ -75,9 +75,9 @@ void NeuralNetworkHandler::create(std::size_t input_size, std::size_t output_siz
                                   Type type)
 {
     size_t currentLayer = 0;
-    const auto HIDDEN_LAYER_SIZE = 100;
-    nn_.add(NeuralNetwork::Layer::Input, input_size)
-       .setFunction(currentLayer, NeuralNetwork::TFunction::Sigmoid);
+    const auto HIDDEN_LAYER_SIZE = 20;
+    nn_.add(NeuralNetwork::Layer::Input, input_size);
+       //.setFunction(currentLayer, NeuralNetwork::TFunction::Sigmoid);
     switch (type)
     {
     case Type::Default:
@@ -94,11 +94,11 @@ void NeuralNetworkHandler::create(std::size_t input_size, std::size_t output_siz
         break;
     }
     nn_.add(NeuralNetwork::Layer::Output, output_size)
-//       .setFunction(++currentLayer, NeuralNetwork::TFunction::Sigmoid)
+       .setFunction(++currentLayer, NeuralNetwork::TFunction::Sigmoid)
        .create();
 }
 
-void NeuralNetworkHandler::train(const std::vector<int>& input_data)
+void NeuralNetworkHandler::train(const NeuralNetwork::Neurons& input_data)
 {
     nn_.train(input_data);
 }

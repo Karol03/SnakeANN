@@ -5,9 +5,9 @@
 class Controller
 {
 public:
-    Controller();
+    Controller(Stage& stage);
 
-    void control(Stage& stage);
+    void control();
     bool isPlayerWantToNewGame();
 
 private:
@@ -15,10 +15,11 @@ private:
     int direction_to_key(Direction direction) const;
     bool isValid(int c) const;
     Direction key_to_direction(int key) const;
-    int autoControl(Stage& stage);
-    int manualControl(Stage& stage);
+    int autoControl();
+    int manualControl();
 
     const bool isAutoPlay_;
+    Stage& stage_;
     int lastChar_;
     AutoController autoController_;
 };

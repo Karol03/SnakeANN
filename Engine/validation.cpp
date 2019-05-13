@@ -18,6 +18,7 @@ void Validation::execute()
         LOG_INFO("Game end, ",
                  (snakeEatItself ? "=== snake ate himself ===" : ""),
                  (snakeLeftStage ? "=== snake left the stage ===" : ""));
+        LOG_INFO("You got: [", snake.position().size(), "] points!");
         isFinished_ = true;
     }
 }

@@ -132,17 +132,16 @@ NeuralNetwork& NeuralNetwork::setFunction(size_t layer, TFunction function)
     return *this;
 }
 
-NeuralNetwork& NeuralNetwork::train(const std::vector<int>& input_data)
+NeuralNetwork& NeuralNetwork::train(NeuralNetwork::Neurons data_as_double)
 {
-    std::vector<double> data_as_double(input_data.begin(), input_data.end());
-    std::vector<double>::iterator layers_begin = neurons_.begin();
-    std::vector<double>::iterator layers_end;
+    Neurons::iterator layers_begin = neurons_.begin();
+    Neurons::iterator layers_end;
     for (size_t i=0; i<layersNumber()-1; i++)
     {
         auto input_size = (layers_[i].size+1);
         auto output_size = (layers_[i+1].size);
         layers_end = layers_begin + static_cast<int>(input_size*output_size);
-        std::vector<double> current_layer(layers_begin, layers_end);
+        Neurons current_layer(layers_begin, layers_end);
         Function function(layers_[i].function);
         data_as_double.push_back(1.0);
         auto multiply_result =
