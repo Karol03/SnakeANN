@@ -3,24 +3,28 @@
 #include <SFML/Graphics.hpp>
 
 #include "drawer.hpp"
-
-#define TITLE "Snake"
-#define TEXTURE_WIDTH 16
-#define TEXTURE_HEIGHT 16
-
-// head direction: UP
-#define SNAKE_HEAD_TEXTURE "graphics/head.png"
-// tail edge direction: UP <-> RIGHT
-#define SNAKE_TAIL_EDGE_TEXTURE "graphics/tail_edge.png"
-// tail end direction: UP
-#define SNAKE_TAIL_END_TEXTURE "graphics/tail_end.png"
-// tail straight direction: UP <-> DOWN
-#define SNAKE_TAIL_STRAIGHT_TEXTURE "graphics/tail_straight.png"
-#define FEED_TEXTURE "graphics/feed.png"
+#include "utilities/config.hpp"
 
 
 namespace detail
 {
+const char* print(Direction direction)
+{
+    switch (direction)
+    {
+    case Direction::Up: return "Up";
+    case Direction::Right: return "Right";
+    case Direction::Down: return "Down";
+    case Direction::Left: return "Left";
+    case Direction::Up_Right: return "Up_Right";
+    case Direction::Up_Left: return "Up_Left";
+    case Direction::Down_Right: return "Down_Right";
+    case Direction::Down_Left: return "Down_Left";
+    }
+    LOG_ERROR(__LINE__, "Unsupported direction");
+    throw std::invalid_argument("Unsupported direction ");
+}
+
 const char* print(Drawer::Direction_type direction)
 {
     switch (direction)
@@ -38,8 +42,8 @@ const char* print(Drawer::Direction_type direction)
     case Drawer::LEFT_RIGHT: return "LEFT_RIGHT";
     case Drawer::LEFT_DOWN: return "LEFT_DOWN";
     }
-    LOG_ERROR("Unsupported direction [", direction, "]");
-    throw std::runtime_error("Unsupported direction");
+    LOG_ERROR(__LINE__, "Unsupported direction");
+    throw std::invalid_argument("Unsupported direction");
 }
 
 Direction oposite(Direction direction)
@@ -49,7 +53,13 @@ Direction oposite(Direction direction)
     case Direction::Down: return Direction::Up;
     case Direction::Left: return Direction::Right;
     case Direction::Right: return Direction::Left;
+    case Direction::Up_Right: return Direction::Down_Left;
+    case Direction::Up_Left: return Direction::Down_Right;
+    case Direction::Down_Right: return Direction::Up_Left;
+    case Direction::Down_Left: return Direction::Up_Right;
     }
+    LOG_ERROR(__LINE__, "Unsupported direction. Cannot get oposite direction");
+    throw std::invalid_argument("Unsupported direction");
 }
 
 }  // namespace detail
@@ -169,6 +179,10 @@ void Drawer::drawSnakeHead(const Snake& snake)
     case Direction::Right:
         angle = NINETY_DEGREE;
         break;
+    default:
+        LOG_ERROR("Cannot rotate texture of snake head element to this direction [",
+                  detail::print(direction), "]");
+        throw std::invalid_argument("Cannot draw texture element");
     }
     head.setPosition(HEAD_X_POSITION, HEAD_Y_POSITION);
     rotate(head, angle);
@@ -301,7 +315,7 @@ Drawer::Direction_type Drawer::getDirection(const sf::Vector2i& first,
     else if (delta_x < 0 and delta_y < 0) return LEFT_UP;
     else if (delta_x > 0 and delta_y < 0) return DOWN_RIGHT;
     else if (delta_x < 0 and delta_y > 0) return UP_LEFT;*/
-    LOG_ERROR("Unknown direction first_point: [", first.x, ", ", first.y,
+    LOG_ERROR(": ", __LINE__ ,": Unknown direction first_point: [", first.x, ", ", first.y,
               "] second_point: [", second.x, ", ", second.y, "]");
     throw std::runtime_error("Uknown direction");
 }
@@ -373,7 +387,7 @@ Drawer::Direction_type Drawer::getDirection(
         return DOWN_RIGHT;
     }
 
-    LOG_ERROR("Unknown direction first_point: [", first.x, ", ", first.y,
+    LOG_ERROR(": ", __LINE__ ,": Unknown direction first_point: [", first.x, ", ", first.y,
               "] second_point: [", second.x, ", ", second.y, "]");
     throw std::runtime_error("Uknown direction");
 

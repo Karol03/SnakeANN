@@ -20,7 +20,7 @@ void Feed::randomPosition(const std::vector<sf::Vector2i>& snake,
     do{
         feedPlace.x = Generator::get_random_int(0, max_width);
         feedPlace.y = Generator::get_random_int(0, max_height);
-        LOG_DEBUG("RANDOM [", feedPlace.x, " ", feedPlace.y, "]");
+        LOG_INFO("RANDOM [", feedPlace.x, " ", feedPlace.y, "]");
     } while(compareVectors(snake, feedPlace));
 
     this->position_ = feedPlace;

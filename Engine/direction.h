@@ -5,7 +5,11 @@ enum class Direction {
     Up,
     Right,
     Down,
-    Left
+    Left,
+    Up_Right,
+    Up_Left,
+    Down_Right,
+    Down_Left
 };
 
 #endif // DIRECTION_H

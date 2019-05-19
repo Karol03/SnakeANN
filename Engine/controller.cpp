@@ -3,22 +3,15 @@
 #include <windows.h>
 
 #include "controller.hpp"
-
-#define AUTO_PLAY_ON false
-
-#define UP_KEY    'w'
-#define DOWN_KEY  's'
-#define RIGHT_KEY 'd'
-#define LEFT_KEY  'a'
-#define NEW_GAME  'n'
+#include "utilities/config.hpp"
 
 Controller::Controller(Stage& stage)
-    : isAutoPlay_(AUTO_PLAY_ON)
+    : isAutoPlay_(CONFIG::for_control::AUTO_PLAY_ON)
+    , isDead_(false)
     , stage_(stage)
     , lastChar_(UP_KEY)
-    , autoController_(stage)
+    , autoController_(stage, isDead_)
 {
-    LOG_INFO();
     if (isAutoPlay_)
     {
         LOG_INFO("Auto control turn on, initialize auto_controller");
@@ -28,11 +21,21 @@ Controller::Controller(Stage& stage)
 
 void Controller::control()
 {
-    Sleep(100);
+    if (CONFIG::for_control::DELAY_AFTER_DRAWING)
+    {
+        Sleep(CONFIG::for_control::DELAY_TIME);
+    }
+
     int c;
     if (isAutoPlay_)
     {
         c = autoControl();
+        if (c == NEW_GAME)
+        {
+            lastChar_ = UP_KEY;
+            stage_.reset();
+            return;
+        }
     }
     else
     {
@@ -44,13 +47,24 @@ void Controller::control()
 
 bool Controller::isPlayerWantToNewGame()
 {
+    isDead_ = true;
     if (isAutoPlay_)
     {
-        return true;
+        if (autoControl() == NEW_GAME)
+        {
+            isDead_ = false;
+            lastChar_ = UP_KEY;
+            return true;
+        }
     }
     if (kbhit())
     {
-        return getch() == NEW_GAME;
+        if (getch() == NEW_GAME)
+        {
+            isDead_ = false;
+            lastChar_ = UP_KEY;
+            return true;
+        }
     }
     return false;
 }
@@ -58,11 +72,19 @@ bool Controller::isPlayerWantToNewGame()
 int Controller::autoControl()
 {
     int c = autoController_.play();
+    if (c == NEW_GAME)
+    {
+        lastChar_ = UP_KEY;
+        stage_.reset();
+        return NEW_GAME;
+    }
+
     const auto currentDirection = stage_.getSnake().getDirection();
     if (not isValid(c) or
             lastChar_ == c or
             (opositKey(c) == direction_to_key(currentDirection)))
     {
+        LOG_DEBUG("Last char restored");
         return lastChar_;
     }
     return c;
@@ -119,6 +141,7 @@ int Controller::direction_to_key(Direction direction) const
     case Direction::Down: return DOWN_KEY;
     case Direction::Left: return LEFT_KEY;
     case Direction::Right: return RIGHT_KEY;
+    default: break;
     }
     LOG_ERROR("Unsupported direction");
     throw std::runtime_error("Unsupported direction");

@@ -20,8 +20,10 @@ public:
                double mutation_ratio);
 
     void create(std::size_t input_size, std::size_t output_size, Type type = Type::Default);
-    void train(const NeuralNetwork::Neurons& input_data);
-    NeuralNetwork::Output prediction() const;
+    void train(const Neurons& input_data);
+    Output prediction() const;
+    const NeuralNetwork& neuralNetwork() const { return nn_; }
+    void neuralNetwork(NeuralNetwork& nn) { std::swap(nn_, nn); }
 
 private:
     void mixAndMutate(NeuralNetwork& nn_second,

@@ -19,12 +19,15 @@ Population& Population::create(int population_size, double mutation_ratio,
 {
     LOG_DEBUG("Start create population with",
               " population_size = ", population_size,
+              " mutation_ratio = ", mutation_ratio,
               " input_size = ", input_size,
               " and output_size = ", output_size);
-    if (not (population_size >= 2 and input_size > 0 and output_size > 0) and not isCreated_)
+    if (not (population_size >= 2) or not (input_size > 0) or not (output_size > 0) or not
+             (mutation_ratio < 1.0) or isCreated_)
     {
         LOG_ERROR("Cannot create population with this properties",
-                  (population_size > 2 ? "" : "[invalid population size] "),
+                  (population_size >= 2 ? "" : "[invalid population size] "),
+                  (mutation_ratio < 1.0 ? "" : "[mutation ratio above 1!] "),
                   (input_size > 0 ? "" : "[invalid input size] "),
                   (output_size > 0 ? "" : "[invalid output size] "),
                   (isCreated_ ? "[population already created -> reset() first]" : ""));
@@ -68,10 +71,10 @@ Population& Population::forceEvolve()
     return *this;
 }
 
-std::vector<std::pair<int, int>> Population::getRandomPairs()
+std::vector<std::pair<int, int>> Population::getRandomPairs(size_t max)
 {
     std::vector<std::pair<int, int>> pairs;
-    std::vector<int> membersIds(Generator::generate_int_vector(members_.size()));
+    std::vector<int> membersIds(Generator::generate_int_vector(max));
     Generator::shuffle(membersIds);
     for (size_t i=0; i<membersIds.size()/2; i++)
     {
@@ -82,21 +85,105 @@ std::vector<std::pair<int, int>> Population::getRandomPairs()
     return pairs;
 }
 
+Population::Members Population::copy_population_part_from_begin(double part)
+{
+    if (part > 1.0)
+    {
+        part = 1.0;
+    }
+    else if (part < 0.0)
+    {
+        part = 0.0;
+    }
+    part *= static_cast<double>(members_.size());
+    int part_i = static_cast<int>(part);
+    Members members_copy(members_.begin(), members_.begin() + part_i);
+    return members_copy;
+}
+
+Population::Members Population::create_population_part(double part)
+{
+    if (part > 1.0)
+    {
+        part = 1.0;
+    }
+    else if (part < 0.0)
+    {
+        part = 0.0;
+    }
+    part *= static_cast<double>(members_.size());
+    int part_i = static_cast<int>(part);
+    Member member_prototype = members_.front();
+    Members new_members;
+    for (auto i = 0; i < part_i; i++)
+    {
+        new_members.emplace_back(Member(member_prototype).refresh_nn());
+    }
+    return new_members;
+}
+
+void Population::changeIdsAfterMixing()
+{
+    const unsigned FIRST_ID = 1;
+    unsigned id = FIRST_ID;
+    for (auto& member : members_)
+    {
+        member.id = id;
+        ++id;
+    }
+    LOG_DEBUG("Created new id range for members in range ", FIRST_ID, " to ", id-1);
+}
+
 void Population::mixMembers()
 {
-    const auto randoms = getRandomPairs();
+    const auto POPULATION_PART_TO_MIXING = 0.3;
+    const auto NEW_PART_OF_POPULATION = 0.2;
+    sortMembersByFitness();
+    const auto begin_size = members_.size();
+    Members part_copy = copy_population_part_from_begin(POPULATION_PART_TO_MIXING);
+    Members part_new = create_population_part(NEW_PART_OF_POPULATION);
+    if (part_copy.empty())
+    {
+        LOG_INFO("No members to copy and mixing, increase population size or "
+                 "change POPULATION_PART_TO_MIXING [0.0-1.0]");
+        return;
+    }
+
+    const auto randoms = getRandomPairs(part_copy.size());
     for (const auto& rpair : randoms)
     {
         const auto f = static_cast<unsigned>(rpair.first);
         const auto s = static_cast<unsigned>(rpair.second);
         LOG_DEBUG("Mixing members [", f, " and ", s, "]");
-        members_[f].mix(members_[s]);
+        part_copy[f].mix(part_copy[s]);
     }
-    LOG_INFO("Mix in this generation done");
+    const int new_part_size = part_new.size();
+    const int copy_part_size = part_copy.size();
+    const int both_part_size = new_part_size + copy_part_size;
+    std::swap_ranges(part_new.begin(), part_new.end(),
+                     members_.end() - both_part_size);
+    std::swap_ranges(part_copy.begin(), part_copy.end(),
+                     members_.end() - copy_part_size);
+    Member::restart_members_fitness(members_);
+    if (std::any_of(members_.begin(), members_.end(), [](const Member& m)
+            { return m.fitness() > 0.01; }))
+    {
+        LOG_ERROR("Members fitnesses has not been cleared");
+        throw std::logic_error("Cannot finish members mixing with not zero equals member fitness");
+    }
+    changeIdsAfterMixing();
+    const auto end_size = members_.size();
+    if (begin_size != end_size)
+    {
+        LOG_ERROR("New population size is different than previous! ",
+                  "Previous: ", begin_size, " New: ", end_size);
+        throw std::runtime_error("Invalid population size");
+    }
+    LOG_INFO("Mix in this generation done correctly, new population size is equal previous");
 }
 
 Population& Population::train_routine(
-        const std::vector<NeuralNetwork::Neurons>& examples,
+        const std::vector<Neurons>& examples,
         std::function<void(Population&)> function)
 {
     RETURN_IF_NOT_CREATED
@@ -116,7 +203,7 @@ Population& Population::train_routine(
     return *this;
 }
 
-Population& Population::decide(const NeuralNetwork::Neurons& input_data)
+Population& Population::decide(const Neurons& input_data)
 {
     RETURN_IF_NOT_CREATED
     if (inputSize_ != input_data.size())
@@ -142,7 +229,7 @@ Population& Population::decide(const NeuralNetwork::Neurons& input_data)
 
 Population& Population::one_member_prediction(
         Member& member,
-        const NeuralNetwork::Neurons& input_data)
+        const Neurons& input_data)
 {
     RETURN_IF_NOT_CREATED
     if (inputSize_ != input_data.size())
@@ -153,6 +240,7 @@ Population& Population::one_member_prediction(
     }
     if (not member.isDead())
     {
+        LOG_DEBUG("Member not dead, train");
         member.train(input_data);
         if (failFunction_(member))
         {
@@ -161,6 +249,30 @@ Population& Population::one_member_prediction(
     }
     return *this;
 }
+
+Population& Population::unknown_member_prediction(
+        Member& member,
+        const Neurons& input_data)
+{
+    if (member.input_size() != input_data.size())
+    {
+        LOG_ERROR("Invalid input size. Expected: ", member.input_size(),
+                  " current: ", input_data.size());
+        return *this;
+    }
+    if (not member.isDead())
+    {
+        LOG_DEBUG("Member not dead, get prediction");
+        member.train(input_data);
+        if (failFunction_(member))
+        {
+            member.isDead(true);
+            LOG_DEBUG("Member died");
+        }
+    }
+    return *this;
+}
+
 
 int Population::livingMembers() const
 {
@@ -207,9 +319,11 @@ Member& Population::getMember(unsigned id)
                            { return id == member.id; });
     if (it != members_.end())
     {
+        LOG_DEBUG("Get member with id [", id, "]");
         return *it;
     }
-    return members_.front();
+    LOG_ERROR("No member with this id [", id, "]!");
+    throw std::runtime_error("Wrong member id number");
 }
 
 Member& Population::getNext(const Member& member)
@@ -248,4 +362,9 @@ bool Population::isCreated() const
         return false;
     }
     return true;
+}
+
+unsigned Population::generation() const
+{
+    return generation_;
 }

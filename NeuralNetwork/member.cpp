@@ -7,12 +7,17 @@
 
 Member::Member(unsigned id)
     : id(id)
+    , isDead_(false)
     , isInitialized_(false)
+    , fitness_(0.0)
 {}
 
 Member::Member(unsigned id, double mutation_ratio, size_t input_size, size_t output_size,
                std::function<double(const Member&)> fitness_function)
     : id(id)
+    , isDead_(false)
+    , isInitialized_(false)
+    , fitness_(0.0)
 {
     initialize(mutation_ratio, input_size, output_size, fitness_function);
 }
@@ -31,13 +36,23 @@ Member& Member::initialize(double mutation_ratio, size_t input_size, size_t outp
 
     mutationRatio_ = mutation_ratio;
     fitnessFunction_ = std::move(fitness_function);
-    ann_.create(input_size, output_size, NeuralNetworkHandler::Type::TwoHiddenLayers);
+    inputSize_ = input_size;
+    outputSize_ = output_size;
+    ann_.create(input_size, output_size, NeuralNetworkHandler::Type::OneHiddenLayer);
     isInitialized_ = true;
     LOG_DEBUG("Initialization complete");
     return *this;
 }
 
-Member& Member::train(const NeuralNetwork::Neurons& input_data)
+Member& Member::refresh_nn()
+{
+    NeuralNetworkHandler new_ann;
+    new_ann.create(inputSize_, outputSize_, NeuralNetworkHandler::Type::OneHiddenLayer);
+    std::swap(ann_, new_ann);
+    return *this;
+}
+
+Member& Member::train(const Neurons& input_data)
 {
     RETURN_IF_NOT_INITIALIZED
     ann_.train(input_data);
@@ -46,26 +61,14 @@ Member& Member::train(const NeuralNetwork::Neurons& input_data)
     return *this;
 }
 
-NeuralNetwork::Output Member::prediction() const
+Output Member::prediction() const
 {
     return ann_.prediction();
 }
 
-bool Member::isDead() const
-{
-    return isDead_;
-}
-
-void Member::isDead(bool isdead)
-{
-    isDead_ = isdead;
-}
-
 void Member::mix(Member& member)
 {
-    const double percentageFirstNNPart = 0.7;
-    fitness_ = 0;
-    member.fitness_ = 0;
+    const double percentageFirstNNPart = 0.3;
     ann_.mixNN(member.ann_, percentageFirstNNPart, mutationRatio_);
 }
 
@@ -78,8 +81,38 @@ bool Member::isInitialized() const
 {
     if (not isInitialized_)
     {
-        LOG_ERROR("Initialize member first");
+        LOG_ERROR("Member is not initialized");
         return false;
     }
     return true;
+}
+
+Member& Member::mutation_ratio(double mutation)
+{
+    mutationRatio_ = mutation;
+    return *this;
+}
+
+Member& Member::input_size(size_t size)
+{
+    inputSize_ = size;
+    return *this;
+}
+
+Member& Member::output_size(size_t size)
+{
+    outputSize_ = size;
+    return *this;
+}
+
+Member& Member::fitness_function(std::function<double(const Member&)> function)
+{
+    fitnessFunction_ = function;
+    return *this;
+}
+
+Member& Member::initialized(bool initialized)
+{
+    isInitialized_ = initialized;
+    return *this;
 }

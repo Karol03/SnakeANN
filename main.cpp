@@ -3,11 +3,12 @@
 #include "utilities/generator.hpp"
 #include "utilities/logger.hpp"
 
-#include "NeuralNetwork/neuralnetwork.hpp"
+
+using namespace std;
 
 int main(int argc, char *argv[])
 {
-  //  logger::Logging log(logger::Logging::Error_only);
+    logger::Logging log(logger::Logging::Info);
     QCoreApplication a(argc, argv);
     Generator::initialize();
     Game game;

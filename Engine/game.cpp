@@ -13,8 +13,10 @@ Game::Game()
     states_[State::TValidationState] = std::make_unique<Validation>(stage);
 }
 
+
 int Game::run()
 {
+    LOG_INFO("Start game");
     do
     {
         currentState_ = states_[currentState_]->next();

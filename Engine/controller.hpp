@@ -19,6 +19,7 @@ private:
     int manualControl();
 
     const bool isAutoPlay_;
+    bool isDead_;
     Stage& stage_;
     int lastChar_;
     AutoController autoController_;

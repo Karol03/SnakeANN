@@ -2,7 +2,6 @@
 #include "drawer.hpp"
 #include "state.hpp"
 
-
 class Drawing : public State
 {
 public:

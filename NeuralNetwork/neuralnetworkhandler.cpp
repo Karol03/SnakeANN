@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "neuralnetworkhandler.hpp"
+#include "utilities/config.hpp"
 #include "utilities/generator.hpp"
 #include "utilities/logger.hpp"
 
@@ -20,12 +21,10 @@ void NeuralNetworkHandler::mixNN(NeuralNetworkHandler& ann_handler,
 }
 
 void NeuralNetworkHandler::mixAndMutate(NeuralNetwork& nn_second,
-                                 double percentage_first_NN_part,
-                                 double mutation_ratio)
+                                        double percentage_first_NN_part,
+                                        double mutation_ratio)
 {
-    auto& neurons = nn_.neurons();
-    auto& secondNeurons = nn_second.neurons();
-    const auto size = neurons.size();
+    const auto size = nn_.size();
     const auto howManyNeuronsSwap = percentage_first_NN_part*static_cast<double>(size);
     auto neuronInLayerIds = Generator::generate_int_vector(size);
     Generator::shuffle(neuronInLayerIds);
@@ -34,7 +33,7 @@ void NeuralNetworkHandler::mixAndMutate(NeuralNetwork& nn_second,
     for (unsigned j=0; j<static_cast<unsigned>(howManyNeuronsSwap); j++)
     {
         const unsigned idx = static_cast<unsigned>(neuronInLayerIds[j]);
-        std::swap(neurons[idx], secondNeurons[idx]);
+        std::swap(nn_[idx], nn_second[idx]);
     }
 
     const auto howManyNeuronsMutate = mutation_ratio*static_cast<double>(size);
@@ -44,8 +43,8 @@ void NeuralNetworkHandler::mixAndMutate(NeuralNetwork& nn_second,
                 static_cast<unsigned>(neuronInLayerIds[neuronInLayerIdsSize-2*j-1]);
         const unsigned idx_2 =
                 static_cast<unsigned>(neuronInLayerIds[neuronInLayerIdsSize-2*j-2]);
-        NeuralNetwork::mutate(neurons[idx_1]);
-        NeuralNetwork::mutate(neurons[idx_2]);
+        NeuralNetwork::mutate(nn_[idx_1]);
+        NeuralNetwork::mutate(nn_second[idx_2]);
     }
 }
 
@@ -71,39 +70,41 @@ bool NeuralNetworkHandler::isLayersSizeEqual(const NeuralNetwork& nn1, const Neu
     return true;
 }
 
-void NeuralNetworkHandler::create(std::size_t input_size, std::size_t output_size,
+void NeuralNetworkHandler::create(std::size_t input_size,
+                                  std::size_t output_size,
                                   Type type)
 {
-    size_t currentLayer = 0;
-    const auto HIDDEN_LAYER_SIZE = 20;
-    nn_.add(NeuralNetwork::Layer::Input, input_size);
-       //.setFunction(currentLayer, NeuralNetwork::TFunction::Sigmoid);
+    auto FIRST_HL_SIZE = CONFIG::for_genetic_algorithm::FIRST_HIDDEN_LAYER_SIZE;
+    auto LAST_HL_SIZE = CONFIG::for_genetic_algorithm::SECOND_HIDDEN_LAYER_SIZE;
+    nn_.add(input_size, FIRST_HL_SIZE);
+       //.setFunction(currentLayer, TFunction::Sigmoid);
     switch (type)
     {
     case Type::Default:
         break;
     case Type::OneHiddenLayer:
-        nn_.add(NeuralNetwork::Layer::Hidden, HIDDEN_LAYER_SIZE)
-           .setFunction(++currentLayer, NeuralNetwork::TFunction::Sigmoid);
+        nn_.add(FIRST_HL_SIZE, FIRST_HL_SIZE)
+           .setFunction(TFunction::Sigmoid);
+        LAST_HL_SIZE = FIRST_HL_SIZE;
         break;
     case Type::TwoHiddenLayers:
-        nn_.add(NeuralNetwork::Layer::Hidden, HIDDEN_LAYER_SIZE)
-           .setFunction(1, NeuralNetwork::TFunction::Sigmoid)
-           .setFunction(2, NeuralNetwork::TFunction::Sigmoid);
-        currentLayer += 2;
+        nn_.add(FIRST_HL_SIZE, LAST_HL_SIZE)
+           .setFunction(TFunction::Sigmoid);
+        nn_.add(LAST_HL_SIZE, LAST_HL_SIZE)
+           .setFunction(TFunction::Sigmoid);
         break;
     }
-    nn_.add(NeuralNetwork::Layer::Output, output_size)
-       .setFunction(++currentLayer, NeuralNetwork::TFunction::Sigmoid)
-       .create();
+    nn_.add(LAST_HL_SIZE, output_size)
+       .setFunction(TFunction::Sigmoid);
+    nn_.create();
 }
 
-void NeuralNetworkHandler::train(const NeuralNetwork::Neurons& input_data)
+void NeuralNetworkHandler::train(const Neurons& input_data)
 {
     nn_.train(input_data);
 }
 
-NeuralNetwork::Output NeuralNetworkHandler::prediction() const
+Output NeuralNetworkHandler::prediction() const
 {
     return nn_.prediction();
 }

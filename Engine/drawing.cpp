@@ -1,4 +1,5 @@
 #include "drawing.hpp"
+#include "utilities/config.hpp"
 
 Drawing::Drawing(Stage& stage)
     : State(State::TDrawingState, stage)
@@ -7,7 +8,10 @@ Drawing::Drawing(Stage& stage)
 
 void Drawing::execute()
 {
-    drawer_.draw(stage_);
+    if (CONFIG::for_window::DRAW_WINDOW)
+    {
+        drawer_.draw(stage_);
+    }
 }
 
 State::Type Drawing::next()
